@@ -11,8 +11,7 @@ In search.py, you will implement generic search algorithms which are called
 by Pacman agents (in searchAgents.py).
 """
 
-import util
-from util import Stack
+from util import *
 
 class SearchProblem:
   """
@@ -82,25 +81,46 @@ def depthFirstSearch(problem):
   
   print "Start:", problem.getStartState() - Coordinate tuple (5, 5)
   print "Is the start a goal?", problem.isGoalState(problem.getStartState()) - boolean
-  print "Start's successors:", problem.getSuccessors(problem.getStartState())
+  print "Start's successors:", problem.getSuccessors(problem.getStartState()) - [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
   """
   "*** YOUR CODE HERE ***"
-  from game import Directions
-  n = Directions.NORTH
-  e = Directions.EAST
-  s = Directions.SOUTH
-  w = Directions.WEST
-  1
-  "test"
   curState = problem.getStartState()
+
+  visited = set()
   toDo = Stack()
-  result = Stack().push(curState)
-  visited = [curState]
-  
-  while not problem.isGoalState(curState):
-    pass
-  
-  util.raiseNotDefined()
+  result = Stack()
+  path = Stack()
+
+  if problem.isGoalState(curState):
+    return result
+
+  while True:
+    visited.add(curState)
+    # Get Successors
+    successors = problem.getSuccessors(curState)
+    availablePath = False
+    for successor in successors:
+      if successor[0] not in visited:
+        availablePath = True
+        if problem.isGoalState(successor[0]):
+          result.push(successor[1])
+          return result.list
+        else:
+          toDo.push(successor)
+    if not toDo: # No available paths found
+      break
+
+    # Choose next
+    if not availablePath:
+      result.pop() # no valid successors empty, need to backtrack
+      curState = path.pop()
+    else:
+      path.push(curState)
+      next = toDo.pop()
+      curState = next[0]
+      result.push(next[1])
+
+  raise Exception("No valid path found")
   
 def breadthFirstSearch(problem):
   """
@@ -108,7 +128,43 @@ def breadthFirstSearch(problem):
   [2nd Edition: p 73, 3rd Edition: p 82]
   """
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  curState = problem.getStartState()
+
+  visited = set()
+  toDo = Queue()
+  result = Stack()
+  path = Stack()
+
+  if problem.isGoalState(curState):
+    return result
+
+  while True:
+    visited.add(curState)
+    # Get Successors
+    successors = problem.getSuccessors(curState)
+    availablePath = False
+    for successor in successors:
+      if successor[0] not in visited:
+        availablePath = True
+        if problem.isGoalState(successor[0]):
+          result.push(successor[1])
+          return result.list
+        else:
+          toDo.push(successor)
+    if not toDo: # No available paths found
+      break
+
+    # Choose next
+    if not availablePath:
+      result.pop() # no valid successors empty, need to backtrack
+      curState = path.pop()
+    else:
+      path.push(curState)
+      next = toDo.pop()
+      curState = next[0]
+      result.push(next[1])
+
+  raise Exception("No valid path found")
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
