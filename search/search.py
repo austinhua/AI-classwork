@@ -88,37 +88,29 @@ def depthFirstSearch(problem):
 
   visited = set()
   toDo = Stack()
-  result = Stack()
-  path = Stack()
-
+  result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
     visited.add(curState)
+
     # Get Successors
     successors = problem.getSuccessors(curState)
-    availablePath = False
     for successor in successors:
       if successor[0] not in visited:
-        availablePath = True
+        newResult = list(result)
+        newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
-          result.push(successor[1])
-          return result.list
+          return newResult
         else:
-          toDo.push(successor)
-    if not toDo: # No available paths found
+          toDo.push((successor[0], newResult))
+    if toDo.isEmpty(): # No available paths found
       break
 
-    # Choose next
-    if not availablePath:
-      result.pop() # no valid successors empty, need to backtrack
-      curState = path.pop()
-    else:
-      path.push(curState)
-      next = toDo.pop()
-      curState = next[0]
-      result.push(next[1])
+    next = toDo.pop()
+    curState = next[0]
+    result = next[1]
 
   raise Exception("No valid path found")
   
@@ -132,37 +124,29 @@ def breadthFirstSearch(problem):
 
   visited = set()
   toDo = Queue()
-  result = Stack()
-  path = Stack()
-
+  result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
     visited.add(curState)
+
     # Get Successors
     successors = problem.getSuccessors(curState)
-    availablePath = False
     for successor in successors:
       if successor[0] not in visited:
-        availablePath = True
+        newResult = list(result)
+        newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
-          result.push(successor[1])
-          return result.list
+          return newResult
         else:
-          toDo.push(successor)
-    if not toDo: # No available paths found
+          toDo.push((successor[0], newResult))
+    if toDo.isEmpty(): # No available paths found
       break
 
-    # Choose next
-    if not availablePath:
-      result.pop() # no valid successors empty, need to backtrack
-      curState = path.pop()
-    else:
-      path.push(curState)
-      next = toDo.pop()
-      curState = next[0]
-      result.push(next[1])
+    next = toDo.pop()
+    curState = next[0]
+    result = next[1]
 
   raise Exception("No valid path found")
       
