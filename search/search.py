@@ -12,6 +12,7 @@ by Pacman agents (in searchAgents.py).
 """
 
 from util import *
+import copy
 
 class SearchProblem:
   """
@@ -85,20 +86,19 @@ def depthFirstSearch(problem):
   """
   "*** YOUR CODE HERE ***"
   curState = problem.getStartState()
-
   visited = set()
+  visited.add(curState)
   toDo = Stack()
   result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
-    visited.add(curState)
-
     # Get Successors
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
+        visited.add(successor[0])
         newResult = list(result)
         newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
@@ -121,20 +121,19 @@ def breadthFirstSearch(problem):
   """
   "*** YOUR CODE HERE ***"
   curState = problem.getStartState()
-
   visited = set()
+  visited.add(curState)
   toDo = Queue()
   result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
-    visited.add(curState)
-
     # Get Successors
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
+        visited.add(successor[0])
         newResult = list(result)
         newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
@@ -153,7 +152,38 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  curState = problem.getStartState()
+
+  visited = set()
+  visited.add(curState)
+  toDo = PriorityQueue()
+  result = []
+
+  toDo.push((curState, result, 0), 0)
+  if problem.isGoalState(curState):
+    return result
+
+  while not toDo.isEmpty():
+    # Grab next node off PriorityQueue
+    next = toDo.pop()
+    curState = next[0]
+    result = next[1]
+    costSoFar = next[2]
+
+    # Get Successors
+    successors = problem.getSuccessors(curState)
+    for successor in successors:
+      if successor[0] not in visited:
+        visited.add(successor[0])
+        totCost = costSoFar + successor[2]
+        newResult = list(result)
+        newResult.append(successor[1])
+        if problem.isGoalState(successor[0]):
+          return newResult
+        else:
+          toDo.push((successor[0], newResult, totCost), totCost)
+
+  raise Exception("No valid path found")
 
 def nullHeuristic(state, problem=None):
   """
@@ -165,7 +195,35 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
   "Search the node that has the lowest combined cost and heuristic first."
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  curState = problem.getStartState()
+  visited = set()
+  visited.add(curState)
+  toDo = PriorityQueue()
+  result = []
+
+  toDo.push((curState, result, 0), 0)
+  if problem.isGoalState(curState):
+    return result
+
+  while not toDo.isEmpty():
+    # Grab next node off PriorityQueue
+    next = toDo.pop()
+    curState = next[0]
+    result = next[1]
+    costSoFar = next[2]
+
+    # Get Successors
+    successors = problem.getSuccessors(curState)
+    for successor in successors:
+      if successor[0] not in visited:
+        visited.add(successor[0])
+        totCost = costSoFar + successor[2] + heuristic(successor[0], problem)
+        newResult = list(result)
+        newResult.append(successor[1])
+        if problem.isGoalState(successor[0]):
+          return newResult
+        else:
+          toDo.push((successor[0], newResult, totCost), totCost)
     
   
 # Abbreviations

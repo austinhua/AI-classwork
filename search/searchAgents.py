@@ -275,18 +275,18 @@ class CornersProblem(search.SearchProblem):
       if not startingGameState.hasFood(*corner):
         print 'Warning: no food in corner ' + str(corner)
     self._expanded = 0 # Number of search nodes expanded
-    
     "*** YOUR CODE HERE ***"
     
   def getStartState(self):
     "Returns the start state (in your state space, not the full Pacman state space)"
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return (self.startingPosition, tuple([False] * 4))
     
   def isGoalState(self, state):
     "Returns whether this search state is a goal state of the problem"
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    cornersReached = state[1]
+    return cornersReached[0] and cornersReached[1] and cornersReached[2] and cornersReached[3]
        
   def getSuccessors(self, state):
     """
@@ -310,7 +310,24 @@ class CornersProblem(search.SearchProblem):
       #   hitsWall = self.walls[nextx][nexty]
       
       "*** YOUR CODE HERE ***"
-      
+      prevVisitedCorners = state[1]
+      x, y = state[0][0], state[0][1]
+      dx, dy = Actions.directionToVector(action)
+      nextx, nexty = int(x + dx), int(y + dy)
+      hitsWall = self.walls[nextx][nexty]
+      if not hitsWall:
+        if (nextx, nexty) == self.corners[0]:
+          visitedCorners = (True, prevVisitedCorners[1], prevVisitedCorners[2], prevVisitedCorners[3])
+        elif (nextx, nexty) == self.corners[1]:
+            visitedCorners = (prevVisitedCorners[0], True, prevVisitedCorners[2], prevVisitedCorners[3])
+        elif (nextx, nexty) == self.corners[2]:
+          visitedCorners = (prevVisitedCorners[0], prevVisitedCorners[1], True, prevVisitedCorners[3])
+        elif (nextx, nexty) == self.corners[3]:
+          visitedCorners = (prevVisitedCorners[0], prevVisitedCorners[1], prevVisitedCorners[2], True)
+        else:
+          visitedCorners = prevVisitedCorners
+        successors.append((((nextx, nexty), visitedCorners), action, 1))
+        
     self._expanded += 1
     return successors
 
