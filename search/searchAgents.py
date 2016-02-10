@@ -473,7 +473,46 @@ def foodHeuristic(state, problem):
   """
   position, foodGrid = state
   "*** YOUR CODE HERE ***"
-  return 0
+  from util import PriorityQueue, PriorityQueueWithFunction
+  import heapq
+  def negManhatDist(pair):
+    return -1 * util.manhattanDistance(pair[0], pair[1]) # negative to find the biggest using minheap
+  def manhatDistToPos(point):
+    return util.manhattanDistance(position, point)
+  foodCoordList = foodGrid.asList()
+  if len(foodCoordList) == 0:
+    return 0
+  elif len(foodCoordList) == 1:
+    return util.manhattanDistance(position, foodCoordList[0])
+
+  cost = 0
+  furthest = PriorityQueueWithFunction(negManhatDist)
+  for foodCoord1 in foodCoordList:
+    for foodCoord2 in foodCoordList:
+      if foodCoord1 == foodCoord2:
+        continue
+      else:
+        furthest.push((foodCoord1, foodCoord2))
+
+  maxDist, pair = heapq.heappop(furthest.heap) # !!maxDist is negative
+  candidates = []
+  candidates.append(pair)
+  while not furthest.isEmpty():
+    nextVal, nextPair = heapq.heappop(furthest.heap)
+    if nextVal == maxDist:
+      candidates.append(nextPair)
+    else:
+      break
+
+  maxDist = -maxDist # Turn back to positive
+  cost += maxDist
+  closest = PriorityQueueWithFunction(manhatDistToPos)
+  ## Find closest point to current position
+  for candidate in candidates:
+    closest.push(candidate[0])
+  minDist, pair = heapq.heappop(closest.heap)
+  cost += minDist
+  return cost
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
