@@ -87,18 +87,17 @@ def depthFirstSearch(problem):
   "*** YOUR CODE HERE ***"
   curState = problem.getStartState()
   visited = set()
-  visited.add(curState)
   toDo = Stack()
   result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
+    visited.add(curState)
     # Get Successors
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
-        visited.add(successor[0])
         newResult = list(result)
         newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
@@ -110,6 +109,8 @@ def depthFirstSearch(problem):
 
     next = toDo.pop()
     curState = next[0]
+    if curState in visited:
+      continue
     result = next[1]
 
   raise Exception("No valid path found")
@@ -122,18 +123,17 @@ def breadthFirstSearch(problem):
   "*** YOUR CODE HERE ***"
   curState = problem.getStartState()
   visited = set()
-  visited.add(curState)
   toDo = Queue()
   result = []
   if problem.isGoalState(curState):
     return result
 
   while True:
+    visited.add(curState)
     # Get Successors
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
-        visited.add(successor[0])
         newResult = list(result)
         newResult.append(successor[1])
         if problem.isGoalState(successor[0]):
@@ -145,6 +145,8 @@ def breadthFirstSearch(problem):
 
     next = toDo.pop()
     curState = next[0]
+    if curState in visited:
+      continue
     result = next[1]
 
   raise Exception("No valid path found")
@@ -155,7 +157,6 @@ def uniformCostSearch(problem):
   curState = problem.getStartState()
 
   visited = set()
-  visited.add(curState)
   toDo = PriorityQueue()
   result = []
 
@@ -167,6 +168,10 @@ def uniformCostSearch(problem):
     # Grab next node off PriorityQueue
     next = toDo.pop()
     curState = next[0]
+    if curState in visited:
+      continue
+    else:
+      visited.add(curState)
     result = next[1]
     costSoFar = next[2]
 
@@ -174,7 +179,6 @@ def uniformCostSearch(problem):
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
-        visited.add(successor[0])
         totCost = costSoFar + successor[2]
         newResult = list(result)
         newResult.append(successor[1])
@@ -197,7 +201,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
   "*** YOUR CODE HERE ***"
   curState = problem.getStartState()
   visited = set()
-  visited.add(curState)
   toDo = PriorityQueue()
   result = []
 
@@ -209,6 +212,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     # Grab next node off PriorityQueue
     next = toDo.pop()
     curState = next[0]
+    if curState in visited:
+      continue
+    else:
+      visited.add(curState)
     result = next[1]
     costSoFar = next[2]
 
@@ -216,7 +223,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     successors = problem.getSuccessors(curState)
     for successor in successors:
       if successor[0] not in visited:
-        visited.add(successor[0])
         totCost = costSoFar + successor[2] + heuristic(successor[0], problem)
         newResult = list(result)
         newResult.append(successor[1])
